@@ -1,6 +1,6 @@
 // minesweeper main js v1
 
-
+// model
 const repeatString = (str, num) => {
   if (num <= 1) {
     return str;
@@ -8,12 +8,15 @@ const repeatString = (str, num) => {
   return str + repeatString(str, num-1);
 }
 
+// controller
+
+// view
+
 const addElement = (elements, destination) => {
   elements.forEach(element => {
     destination.append(element);
   });
 }
-
 
 const initialize = () => {
   const main = document.createElement('main');
@@ -46,6 +49,7 @@ const initialize = () => {
   section.id = 'config-buttons';
 
   addElement([header, display, section], main);
+  loadGrid(16, 30);
 }
 
 // loads game board givin number of rows and columns
@@ -67,4 +71,3 @@ const loadGrid = (rows, columns) => {
 
 
 initialize();
-loadGrid(16, 30);
