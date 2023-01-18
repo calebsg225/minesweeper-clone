@@ -1,18 +1,28 @@
 #main-container {
   overflow: auto;
-  /* border: 1px solid orange; */
   width: 80rem;
 }
 
 #header {
-  height: 2.2rem;
-  /* border: 1px solid red; */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 2.5rem;
+}
+
+#header-title {
+  font-size: inherit;
+  font-weight: 500;
+}
+
+#settings-icon {
+  cursor: pointer;
+  height: 80%;
 }
 
 /* game display window */
 #game-display {
   display: grid;
-  /* border: 1px solid blue; */
 
 }
 

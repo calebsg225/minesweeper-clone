@@ -20,13 +20,28 @@ const initialize = () => {
   main.id = 'main-container';
   addElement([main], document.body);
 
+
+  // header
   const header = document.createElement('header');
   header.id = 'header';
-  header.innerText = 'Minesweeper';
 
+  const headerTitle = document.createElement('h1');
+  headerTitle.id = 'header-title';
+  headerTitle.innerText = 'Minesweeper'
+  
+  const settingsIcon = document.createElement('img');
+  settingsIcon.src = 'icons/settings.png';
+  settingsIcon.id = 'settings-icon';
+
+  addElement([headerTitle, settingsIcon], header);
+
+
+  // game display
   const display = document.createElement('section');
   display.id = 'game-display';
 
+
+  // tbd
   const section = document.createElement('section');
   section.id = 'config-buttons';
 
