@@ -1,0 +1,31 @@
+#main-container {
+  position: relative;
+  padding-bottom: 5.5vh;
+  height: fit-content;
+  /* border: 1px solid rgb(255, 0, 149); */
+}
+
+#header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 5vh;
+  margin-bottom: .5vh;
+  border: 1px solid red;
+}
+
+#game-display {
+  height: fit-content;
+  min-height: 5vh;
+  border: 1px solid blue;
+}
+
+#config-buttons {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin-top: .5vh;
+  border: 1px solid green;
+  height: 5vh;
+}
