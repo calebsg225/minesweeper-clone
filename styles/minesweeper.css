@@ -30,7 +30,7 @@
   cursor: pointer;
   aspect-ratio: 1/1;
   border-radius: 0;
-  background-color: rgb(179, 179, 179);
+  background-color: rgb(133, 136, 180);
   border: .1px solid rgb(95, 107, 129);
 }
 
@@ -42,4 +42,44 @@
 #config-buttons {
   /* border: 1px solid green; */
   height: 2.2rem;
+}
+
+/* settings page */
+#settings-greyout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  z-index: 100;
+  background-color: rgba(0, 0, 0, .7);
+}
+
+#settings-menu-container {
+  display: grid;
+  grid-template-columns: 100%;
+  justify-content: center;
+  background-color: rgb(175, 176, 182);
+  width: 40vw;
+  min-width: 25rem;
+  height: 50vh;
+  min-height: 30rem;
+  border-radius: 1rem;
+  padding: 10px;
+}
+
+#action-container {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.action {
+  width: 100%;
+}
+
+.settings-button {
+  font-size: 2rem;
 }
