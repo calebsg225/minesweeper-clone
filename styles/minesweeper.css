@@ -1,31 +1,35 @@
 #main-container {
-  position: relative;
-  padding-bottom: 5.5vh;
-  height: fit-content;
-  /* border: 1px solid rgb(255, 0, 149); */
+  overflow: auto;
+  /* border: 1px solid orange; */
+  width: 80rem;
 }
 
 #header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 5vh;
-  margin-bottom: .5vh;
-  border: 1px solid red;
+  height: 2.2rem;
+  /* border: 1px solid red; */
 }
 
+/* game display window */
 #game-display {
-  height: fit-content;
-  min-height: 5vh;
-  border: 1px solid blue;
+  display: grid;
+  /* border: 1px solid blue; */
+
 }
 
+.minesweeper-button {
+  cursor: pointer;
+  aspect-ratio: 1/1;
+  border-radius: 0;
+  background-color: rgb(199, 199, 199);
+  border: .1px solid rgb(231, 231, 231);
+}
+
+.minesweeper-button:hover {
+  background-color: gray;
+}
+
+/* game configuration buttons */
 #config-buttons {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin-top: .5vh;
-  border: 1px solid green;
-  height: 5vh;
+  /* border: 1px solid green; */
+  height: 2.2rem;
 }
