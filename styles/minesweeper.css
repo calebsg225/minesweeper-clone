@@ -19,7 +19,7 @@
   cursor: pointer;
   height: 80%;
   border-radius: 50%;
-  transition: opacity .15s;
+  transition: opacity .5;
 }
 
 #settings-icon:hover {

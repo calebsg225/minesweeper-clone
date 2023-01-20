@@ -2,6 +2,8 @@
 
 // model
 
+let mineField = [];
+
 const baseModes = [
   {
     gamemode: 'Beginner',
@@ -25,8 +27,7 @@ const baseModes = [
     isActive: true
   }
 ]
-const defaultNum = 2;
-const defaultMode = baseModes[defaultNum].gamemode;
+const defaultMode = 2;
 let currentMode = defaultMode;
 let previousMode = defaultMode;
 
@@ -41,34 +42,32 @@ const toggleActive = (modeToActivate) => {
   baseModes.forEach(mode => {
     mode.isActive = false;
   });
-  modeToActivate.isActive = true;
-  currentMode = modeToActivate.gamemode;
-}
-
-const revertActive = () => {
-  let modeToRevert;
-  baseModes.forEach(mode => {
-    if (mode.gamemode == previousMode) {
-      modeToRevert = mode;
+  for (let i = 0; i < 3; i++) {
+    if (baseModes[i].gamemode == modeToActivate.gamemode) {
+      currentMode = i;
     }
-  });
-  
-  toggleActive(modeToRevert);
+  }
 
-  currentMode = previousMode;
+  modeToActivate.isActive = true;
 }
 
 const createNew = () => {
   previousMode = currentMode;
-  let rows;
-  let columns;
-  baseModes.forEach(mode => {
-    if (mode.isActive) {
-      rows = mode.rows;
-      columns = mode.columns;
-    }
-  });
+  const rows = baseModes[currentMode].rows;
+  const columns = baseModes[currentMode].columns;
+
   loadGrid(rows, columns);
+}
+
+const setMineFieldDims = (field) => {
+  return Array.from(Array(baseModes[currentMode].rows), () => new Array(baseModes[currentMode].columns).fill(0));
+}
+
+const fillMineField = (field) => {
+  for (let i = 0; i < baseModes[currentMode].mines; i++) {
+    
+  }
+  return field;
 }
 
 // controller
@@ -78,13 +77,13 @@ const onSettings = () => {
 }
 
 const onExit = () => {
-  revertActive();
+  toggleActive(baseModes[previousMode]);
   unloadSettingsPage();
 }
 
 const onCreate = () => {
-    unloadSettingsPage();
     createNew();
+    unloadSettingsPage();
 }
 
 const onActive = (modeToActivate) => {
@@ -92,6 +91,13 @@ const onActive = (modeToActivate) => {
     toggleActive(modeToActivate);
     displayActive(modeToActivate);
   }
+}
+
+const onReveal = event => {
+  const buttonToClear = event.target;
+  const idToClear = buttonToClear.id;
+
+  const gridsize = idToClear.split(/_/)
 }
 
 // view
@@ -103,13 +109,13 @@ const addElement = (elements, destination) => {
 
 const displayActive = (activeMode) => {
   document.getElementsByClassName('settings-active-button')[0].classList.remove('settings-active-button');
-  const activeButton = document.getElementById('settings-mode-' + currentMode);
+  const activeButton = document.getElementById('settings-mode-' + baseModes[currentMode].gamemode);
   activeButton.classList.add('settings-active-button');
 }
 
 const unloadSettingsPage = () => {
   document.getElementById('settings-greyout').remove();
-  document.getElementById('header-title').innerText = 'Minesweeper - ' + currentMode;
+  document.getElementById('header-title').innerText = 'Minesweeper - ' + baseModes[currentMode].gamemode;
 }
 
 const loadSettingsPage = () => { // settings page
@@ -164,7 +170,7 @@ const initialize = () => { // load page
 
   const headerTitle = document.createElement('h1');
   headerTitle.id = 'header-title';
-  headerTitle.innerText = 'Minesweeper - ' + currentMode;
+  headerTitle.innerText = 'Minesweeper - ' + baseModes[currentMode].gamemode;
   
   const settingsIcon = document.createElement('img');
   settingsIcon.src = 'icons/settings.png';
@@ -179,7 +185,7 @@ const initialize = () => { // load page
   display.id = 'game-display';
 
   addElement([header, display], main);
-  loadGrid(baseModes[defaultNum].rows, baseModes[defaultNum].columns);
+  loadGrid(baseModes[defaultMode].rows, baseModes[defaultMode].columns);
 }
 
 // loads game board givin number of rows and columns
@@ -194,9 +200,12 @@ const loadGrid = (rows, columns) => {
       gridButton = document.createElement('button');
       gridButton.id = i + '_' + j;
       gridButton.className = 'minesweeper-button';
+      gridButton.onclick = onReveal;
       display.append(gridButton);
     }
   }
+  mineField = setMineFieldDims(mineField);
+  mineField = fillMineField(mineField);
 }
 
 
