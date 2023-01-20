@@ -3,25 +3,29 @@
 // model
 
 const defaultMode = 'Expert';
-const currentMode = defaultMode;
+let currentMode = defaultMode;
+let previousMode = defaultMode;
 const baseModes = [
   {
     gamemode: 'Beginner',
     rows: 9,
     columns: 9,
-    mines: 10
+    mines: 10,
+    isActive: false
   },
   {
     gamemode: 'Intermediate',
     rows: 16,
     columns: 16,
-    mines: 40
+    mines: 40,
+    isActive: false
   },
   {
     gamemode: 'Expert',
     rows: 16,
     columns: 30,
-    mines: 99
+    mines: 99,
+    isActive: true
   }
 ]
 
@@ -30,6 +34,40 @@ const repeatString = (str, num) => {
     return str;
   }
   return str + repeatString(str, num-1);
+}
+
+const toggleActive = (modeToActivate) => {
+  baseModes.forEach(mode => {
+    mode.isActive = false;
+  });
+  modeToActivate.isActive = true;
+  currentMode = modeToActivate.gamemode;
+}
+
+const revertActive = () => {
+  let modeToRevert;
+  baseModes.forEach(mode => {
+    if (mode.gamemode == previousMode) {
+      modeToRevert = mode;
+    }
+  });
+  
+  toggleActive(modeToRevert);
+
+  currentMode = previousMode;
+}
+
+const createNew = () => {
+  previousMode = currentMode;
+  let rows;
+  let columns;
+  baseModes.forEach(mode => {
+    if (mode.isActive) {
+      rows = mode.rows;
+      columns = mode.columns;
+    }
+  });
+  loadGrid(rows, columns);
 }
 
 
@@ -41,6 +79,19 @@ const onSettings = () => {
 
 const onExit = () => {
   unloadSettingsPage();
+  revertActive();
+}
+
+const onCreate = () => {
+    unloadSettingsPage();
+    createNew();
+}
+
+const onActive = (modeToActivate) => {
+  return () => {
+    toggleActive(modeToActivate);
+    displayActive(modeToActivate);
+  }
 }
 
 // view
@@ -48,6 +99,12 @@ const addElement = (elements, destination) => {
   elements.forEach(element => {
     destination.append(element);
   });
+}
+
+const displayActive = (activeMode) => {
+  document.getElementsByClassName('settings-active-button')[0].classList.remove('settings-active-button');
+  const activeButton = document.getElementById('settings-mode-' + currentMode);
+  activeButton.classList.add('settings-active-button');
 }
 
 const unloadSettingsPage = () => {
@@ -66,9 +123,13 @@ const loadSettingsPage = () => {
 
   baseModes.forEach(mode => {
     const modebutton = document.createElement('button');
-    modebutton.id = 'settings-mode-select';
+    modebutton.id = 'settings-mode-' + mode.gamemode;
     modebutton.className = 'settings-button';
-    modebutton.innerText = mode.gamemode;
+    if (mode.isActive) {
+      modebutton.classList.add('settings-active-button');
+    }
+    modebutton.innerText = mode.gamemode + ' - ' + mode.rows + 'x' + mode.columns + ' ' + mode.mines + ' mines';
+    modebutton.onclick = onActive(mode);
     addElement([modebutton], menu);
   });
 
@@ -80,6 +141,7 @@ const loadSettingsPage = () => {
   create.id = 'settings-create';
   create.className = 'settings-button action';
   create.innerText = 'Create';
+  create.onclick = onCreate;
 
   const exit = document.createElement('button');
   exit.id = 'settings-exit'
