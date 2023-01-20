@@ -30,6 +30,7 @@ const baseModes = [
 const defaultMode = 2;
 let currentMode = defaultMode;
 let previousMode = defaultMode;
+let firstTile = true;
 
 const repeatString = (str, num) => {
   if (num <= 1) {
@@ -59,10 +60,21 @@ const createNew = () => {
   loadGrid(rows, columns);
 }
 
-const initializeMineField = field => {
-  field = Array.from(Array(baseModes[currentMode].rows), () => new Array(baseModes[currentMode].columns).fill(0));
-  for (let i = 0; i < baseModes[currentMode].mines; i++) {
-    
+const createMineField = () => {
+  const mode = baseModes[currentMode];
+  return(Array.from(Array(mode.rows), () => new Array(mode.columns).fill(0)));
+}
+
+const placeMines = field => {
+  const mode = baseModes[currentMode];
+
+  let row;
+  let column;
+  for (let i = 0; i < mode.mines; i++) {
+    row = Math.floor(Math.random() * mode.rows);
+    column = Math.floor(Math.random() * mode.columns);
+    if (field[row][column] != 0) {i--; continue;}
+    field[row][column]++;
   }
   return field;
 }
@@ -95,7 +107,6 @@ const onReveal = event => {
   const idToReveal = buttonToReveal.id;
 
   const gridsize = idToReveal.split(/_/);
-  console.log(gridsize);
 }
 
 // view
@@ -193,10 +204,6 @@ const loadGrid = (rows, columns) => {
   display.innerHTML = ''
   display.style.gridTemplateColumns = repeatString('1fr ', columns);
 
-  /* const image = document.createElement('img');
-  image.className = 'm-button-icon';
-  image.src = 'icons/1.png'; */
-
   let gridButton;
   for (let i = 0; i < rows; i++) {
     for (let j = 0; j < columns; j++) {
@@ -204,11 +211,10 @@ const loadGrid = (rows, columns) => {
       gridButton.id = i + '_' + j;
       gridButton.className = 'minesweeper-button';
       gridButton.onclick = onReveal;
-   /*    gridButton.appendChild(image); */
       display.append(gridButton);
     }
   }
-  mineField = initializeMineField(mineField);
+  mineField = placeMines(createMineField());
 }
 
 
