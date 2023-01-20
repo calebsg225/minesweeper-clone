@@ -40,6 +40,10 @@
   border: .5px solid rgb(95, 107, 129);
 }
 
+.m-button-icon {
+  
+}
+
 .minesweeper-button:hover {
   background-color: rgb(113, 117, 155);
 }
