@@ -2,9 +2,6 @@
 
 // model
 
-const defaultMode = 'Expert';
-let currentMode = defaultMode;
-let previousMode = defaultMode;
 const baseModes = [
   {
     gamemode: 'Beginner',
@@ -28,6 +25,10 @@ const baseModes = [
     isActive: true
   }
 ]
+const defaultNum = 2;
+const defaultMode = baseModes[defaultNum].gamemode;
+let currentMode = defaultMode;
+let previousMode = defaultMode;
 
 const repeatString = (str, num) => {
   if (num <= 1) {
@@ -70,7 +71,6 @@ const createNew = () => {
   loadGrid(rows, columns);
 }
 
-
 // controller
 
 const onSettings = () => {
@@ -78,8 +78,8 @@ const onSettings = () => {
 }
 
 const onExit = () => {
-  unloadSettingsPage();
   revertActive();
+  unloadSettingsPage();
 }
 
 const onCreate = () => {
@@ -108,11 +108,11 @@ const displayActive = (activeMode) => {
 }
 
 const unloadSettingsPage = () => {
-  const toRemove = document.getElementById('settings-greyout');
-  toRemove.remove();
+  document.getElementById('settings-greyout').remove();
+  document.getElementById('header-title').innerText = 'Minesweeper - ' + currentMode;
 }
 
-const loadSettingsPage = () => {
+const loadSettingsPage = () => { // settings page
   const greyout = document.createElement('div');
   greyout.id = 'settings-greyout';
   addElement([greyout], document.body);
@@ -152,7 +152,7 @@ const loadSettingsPage = () => {
   addElement([create, exit], actionDiv)
 }
 
-const initialize = () => {
+const initialize = () => { // load page
   const main = document.createElement('main');
   main.id = 'main-container';
   addElement([main], document.body);
@@ -178,13 +178,8 @@ const initialize = () => {
   const display = document.createElement('section');
   display.id = 'game-display';
 
-
-  // tbd
-  const section = document.createElement('section');
-  section.id = 'config-buttons';
-
-  addElement([header, display, section], main);
-  loadGrid(16, 30);
+  addElement([header, display], main);
+  loadGrid(baseModes[defaultNum].rows, baseModes[defaultNum].columns);
 }
 
 // loads game board givin number of rows and columns

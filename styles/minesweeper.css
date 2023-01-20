@@ -18,6 +18,12 @@
 #settings-icon {
   cursor: pointer;
   height: 80%;
+  border-radius: 50%;
+  transition: opacity .15s;
+}
+
+#settings-icon:hover {
+  opacity: 0.5;
 }
 
 /* game display window */
@@ -38,12 +44,6 @@
   background-color: rgb(113, 117, 155);
 }
 
-/* game configuration buttons */
-#config-buttons {
-  /* border: 1px solid green; */
-  height: 2.2rem;
-}
-
 /* settings page */
 #settings-greyout {
   display: flex;
@@ -62,18 +62,18 @@
   display: grid;
   grid-template-columns: 100%;
   justify-content: center;
-  background-color: rgb(175, 176, 182);
+  background-color: rgba(175, 176, 182, 0);
   width: 40vw;
   min-width: 20rem;
   height: 50vh;
   min-height: 20rem;
   border-radius: 1rem;
-  padding: 10px;
 }
 
 #action-container {
   display: flex;
   justify-content: space-evenly;
+  border-radius: inherit;
 }
 
 .action {
@@ -83,8 +83,16 @@
 .settings-button {
   font-size: 1.4rem;
   border: none;
+  background-color: rgb(178, 187, 226);
+  border-radius: inherit;
+  cursor: pointer;
+  transition: opacity .2s;
+}
+
+.settings-button:hover {
+  opacity: .9;
 }
 
 .settings-active-button {
-  background-color: rgb(72, 87, 138);
+  background-color: rgb(121, 132, 168);
 }
