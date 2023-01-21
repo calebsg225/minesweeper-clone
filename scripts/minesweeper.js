@@ -2,7 +2,9 @@
 
 // model
 
-let mineField = [];
+let minefield = [];
+let spacesRevealed = 0;
+let firstTile = true;
 
 const baseModes = [
   {
@@ -30,7 +32,6 @@ const baseModes = [
 const defaultMode = 2;
 let currentMode = defaultMode;
 let previousMode = defaultMode;
-let firstTile = true;
 
 const repeatString = (str, num) => {
   if (num <= 1) {
@@ -79,6 +80,33 @@ const placeMines = field => {
   return field;
 }
 
+const replaceMines = idMakeCLear => {
+
+}
+
+const checkWin = () => {
+  const mode = baseModes[currentMode];
+  return spacesRevealed == (mode.rows * mode.columns) - mode.mines;
+}
+
+const showFlags = () => {
+
+}
+
+const revealedMine = idIsMine => {
+  const idCoords = idIsMine.split(/_/);
+  return minefield[+idCoords[0]][+idCoords[1]] == 1;
+}
+
+const revealMines = () => {
+  
+}
+
+const reveal = idToReveal => {
+  const idCoords = idToReveal.split(/_/);
+
+}
+
 // controller
 
 const onSettings = () => {
@@ -103,10 +131,23 @@ const onActive = (modeToActivate) => {
 }
 
 const onReveal = event => {
-  const buttonToReveal = event.target;
-  const idToReveal = buttonToReveal.id;
+  const tileToReveal = event.target;
+  const tileId = tileToReveal.id;
 
-  const gridsize = idToReveal.split(/_/);
+  if (firstTile) {replaceMines(tileId)}
+
+  if (revealedMine(tileId)) {
+    revealMines();
+    gameLost();
+    return;
+  }
+  else {reveal(tileId);}
+  
+  if (checkWin()) {
+    showFlags();
+    gameWon();
+  }
+
 }
 
 // view
@@ -209,13 +250,20 @@ const loadGrid = (rows, columns) => {
     for (let j = 0; j < columns; j++) {
       gridButton = document.createElement('button');
       gridButton.id = i + '_' + j;
-      gridButton.className = 'minesweeper-button';
+      gridButton.className = 'minesweeper-button unrevealed';
       gridButton.onclick = onReveal;
       display.append(gridButton);
     }
   }
-  mineField = placeMines(createMineField());
+  minefield = placeMines(createMineField());
 }
 
+const gameLost = () => {
+
+}
+
+const gameWon = () => {
+
+}
 
 initialize();

@@ -1,3 +1,9 @@
+:root {
+  --unrevealed-bg-color: rgb(130, 133, 165);
+  --revealed-bg-color: rgb(148, 148, 160);
+  --body-bg-color: rgb(95, 107, 129);
+}
+
 #main-container {
   overflow: auto;
   width: 65rem;
@@ -33,15 +39,23 @@
 }
 
 .minesweeper-button {
-  cursor: pointer;
   aspect-ratio: 1/1;
   border-radius: 0;
-  background-color: rgb(130, 133, 165);
-  border: .5px solid rgb(95, 107, 129);
 }
 
-.minesweeper-button:hover {
-  background-color: rgb(113, 117, 155);
+.unrevealed {
+  cursor: pointer;
+  background-color: var(--unrevealed-bg-color);
+  border: .5px solid var(--body-bg-color);
+}
+
+.unrevealed:hover {
+  opacity: .5;
+}
+
+.revealed-clear {
+  border: .5px solid var(--revealed-bg-color);
+  background-color: var(--revealed-bg-color);
 }
 
 .m-button-icon {
@@ -65,14 +79,14 @@
   bottom: 0;
   top: 0;
   z-index: 100;
-  background-color: rgba(0, 0, 0, .7);
+  background-color: rgba(0, 0, 0, .5);
 }
 
 #settings-menu-container {
   display: grid;
   grid-template-columns: 100%;
   justify-content: center;
-  background-color: rgba(175, 176, 182, 0);
+  background-color: rgba(0, 0, 0, 0);
   width: 40vw;
   min-width: 20rem;
   max-width: 40rem;

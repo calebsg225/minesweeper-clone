@@ -3,5 +3,5 @@ body {
   justify-content: center;
   font-family: Roboto, Arial;
   font-size: 1.8rem;
-  background-color: rgb(95, 107, 129);
+  background-color: var(--body-bg-color);
 }
