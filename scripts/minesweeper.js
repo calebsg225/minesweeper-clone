@@ -4,6 +4,7 @@
 
 let minefield = [];
 let spacesRevealed = 0;
+let minesFlagged = 0;
 let firstTile = true;
 
 const baseModes = [
@@ -81,7 +82,8 @@ const placeMines = field => {
 }
 
 const replaceMines = idMakeCLear => {
-
+  // disperse surrounding mines elsewhere
+  firstTile = false;
 }
 
 const checkWin = () => {
@@ -89,8 +91,12 @@ const checkWin = () => {
   return spacesRevealed == (mode.rows * mode.columns) - mode.mines;
 }
 
-const showFlags = () => {
+const checkCleared = (row, column) => {
+  return document.getElementById(row + '_' + column).classList.contains('revealed-clear');
+}
 
+const showFlags = () => {
+  // display flags on unflaggged mines
 }
 
 const revealedMine = idIsMine => {
@@ -99,12 +105,57 @@ const revealedMine = idIsMine => {
 }
 
 const revealMines = () => {
-  
+  // display location of all mines and misplaced flags
 }
 
-const reveal = idToReveal => {
-  const idCoords = idToReveal.split(/_/);
+const recursiveClear = (row, column) => {
+  document.getElementById(row + '_' + column).onclick = '';
+  if (document.getElementById(row + '_' + column).classList.contains('revealed-clear')) {return};
+  const mode = baseModes[currentMode];
+  const surroundingMines = getSurrounding(row, column);
+  if (surroundingMines > 0) {
+    displayNumber(row, column, surroundingMines);
+    return;
+  }
+  displayClear(row, column);
+  if (row < mode.rows - 1 && minefield[row+1][column] == 0) {
+    recursiveClear(row+1, column);
+  }
+  if (row > 0 && minefield[row-1][column] == 0) {
+    recursiveClear(row-1, column);
+  }
+  if (column < mode.columns - 1 && minefield[row][column+1] == 0) {
+    recursiveClear(row, column+1);
+  }
+  if (column > 0 && minefield[row][column-1] == 0) {
+    recursiveClear(row, column-1);
+  }
+  if (row < mode.rows - 1 && column < mode.columns - 1 && minefield[row+1][column+1] == 0) {
+    recursiveClear(row+1, column+1);
+  }
+  if (row > 0 && column < mode.columns - 1 && minefield[row-1][column+1] == 0) {
+    recursiveClear(row-1, column+1);
+  }
+  if (row < mode.rows - 1 && column > 0 && minefield[row+1][column-1] == 0) {
+    recursiveClear(row+1, column-1);
+  }
+  if (row > 0 && column > 0 && minefield[row-1][column-1] == 0) {
+    recursiveClear(row-1, column-1);
+  }
+}
 
+const getSurrounding = (row, column) => {
+  const mode = baseModes[currentMode];
+  let surrounding = 0;
+  if (row < mode.rows - 1 && minefield[row+1][column] == 1) {surrounding++}
+  if (row > 0 && minefield[row-1][column] == 1) {surrounding++}
+  if (column < mode.columns - 1 && minefield[row][column+1] == 1) {surrounding++}
+  if (column > 0 && minefield[row][column-1] == 1) {surrounding++}
+  if (row < mode.rows - 1 && column < mode.columns - 1 && minefield[row+1][column+1] == 1) {surrounding++}
+  if (row > 0 && column < mode.columns - 1 && minefield[row-1][column+1] == 1) {surrounding++}
+  if (row < mode.rows - 1 && column > 0 && minefield[row+1][column-1] == 1) {surrounding++}
+  if (row > 0 && column > 0 && minefield[row-1][column-1] == 1) {surrounding++}
+  return surrounding;
 }
 
 // controller
@@ -133,6 +184,7 @@ const onActive = (modeToActivate) => {
 const onReveal = event => {
   const tileToReveal = event.target;
   const tileId = tileToReveal.id;
+  const idCoords = tileId.split(/_/);
 
   if (firstTile) {replaceMines(tileId)}
 
@@ -141,7 +193,9 @@ const onReveal = event => {
     gameLost();
     return;
   }
-  else {reveal(tileId);}
+  else {
+    recursiveClear(+idCoords[0], +idCoords[1]);
+  }
   
   if (checkWin()) {
     showFlags();
@@ -166,6 +220,24 @@ const displayActive = (activeMode) => {
 const unloadSettingsPage = () => {
   document.getElementById('settings-greyout').remove();
   document.getElementById('header-title').innerText = 'Minesweeper - ' + baseModes[currentMode].gamemode;
+}
+
+const displayNumber = (row, column, mineCount) => {
+  const toDisplayNumber = document.getElementById(row + '_' + column);
+  toDisplayNumber.classList.remove('unrevealed');
+  toDisplayNumber.classList.add('revealed-clear');
+
+  const numberImage = document.createElement('img');
+  numberImage.className = 'm-button-icon';
+  numberImage.src = `icons/${mineCount}.png`;
+
+  toDisplayNumber.append(numberImage);
+}
+
+const displayClear = (row, column) => {
+  const toClear = document.getElementById(row + '_' + column);
+  toClear.classList.remove('unrevealed');
+  toClear.classList.add('revealed-clear');
 }
 
 const loadSettingsPage = () => { // settings page
@@ -259,11 +331,11 @@ const loadGrid = (rows, columns) => {
 }
 
 const gameLost = () => {
-
+  // lost game menu
 }
 
 const gameWon = () => {
-
+  // won game menu
 }
 
 initialize();
