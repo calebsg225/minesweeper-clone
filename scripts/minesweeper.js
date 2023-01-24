@@ -81,8 +81,48 @@ const placeMines = field => {
   return field;
 }
 
-const replaceMines = idMakeCLear => {
+const replaceMines = (row, column) => {
   // disperse surrounding mines elsewhere
+  const mode = baseModes[currentMode];
+  minefield = createMineField();
+  let coords = [[row, column]];
+  minefield[row][column] = 2;
+  if (row < mode.rows - 1) {
+    minefield[row+1][column] = 2;
+    coords.push([row+1, column]);
+  }
+  if (row > 0) {
+    minefield[row-1][column] = 2;
+    coords.push([row-1, column]);
+  }
+  if (column < mode.columns - 1) {
+    minefield[row][column+1] = 2;
+    coords.push([row, column+1]);
+  }
+  if (column > 0) {
+    minefield[row][column-1] = 2;
+    coords.push([row, column-1]);
+  }
+  if (row < mode.rows - 1 && column < mode.columns - 1) {
+    minefield[row+1][column+1] = 2;
+    coords.push([row+1, column+1]);
+  }
+  if (row > 0 && column < mode.columns - 1) {
+    minefield[row-1][column+1] = 2;
+    coords.push([row-1, column+1]);
+  }
+  if (row < mode.rows - 1 && column > 0) {
+    minefield[row+1][column-1] = 2;
+    coords.push([row+1, column-1]);
+  }
+  if (row > 0 && column > 0) {
+    minefield[row-1][column-1] = 2;
+    coords.push([row-1, column-1]);
+  }
+  minefield = placeMines(minefield);
+  coords.forEach(coord => {
+    minefield[coord[0]][coord[1]] = 0;
+  });
   firstTile = false;
 }
 
@@ -186,7 +226,7 @@ const onReveal = event => {
   const tileId = tileToReveal.id;
   const idCoords = tileId.split(/_/);
 
-  if (firstTile) {replaceMines(tileId)}
+  if (firstTile) {replaceMines(+idCoords[0], +idCoords[1])}
 
   if (revealedMine(tileId)) {
     revealMines();
