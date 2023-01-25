@@ -84,7 +84,7 @@ const placeMines = field => {
 }
 
 const replaceMines = (row, column) => {
-  // disperse surrounding mines elsewhere
+  // load mines not near first click
   const mode = baseModes[currentMode];
   minefield = createMineField();
   let coords = [[row, column]];
@@ -133,10 +133,6 @@ const checkWin = () => {
   return spacesRevealed == (mode.rows * mode.columns) - mode.mines;
 }
 
-const checkCleared = (row, column) => {
-  return document.getElementById(row + '_' + column).classList.contains('revealed-clear');
-}
-
 const showFlags = () => {
   // display flags on unflaggged mines
 }
@@ -152,7 +148,9 @@ const revealMines = () => {
 
 const recursiveClear = (row, column) => {
   document.getElementById(row + '_' + column).onclick = '';
+  document.getElementById(row + '_' + column).oncontextmenu = '';
   if (document.getElementById(row + '_' + column).classList.contains('revealed-clear')) {return};
+  spacesRevealed ++;
   const mode = baseModes[currentMode];
   const surroundingMines = getSurrounding(row, column);
   if (surroundingMines > 0) {
@@ -198,6 +196,13 @@ const getSurrounding = (row, column) => {
   if (row < mode.rows - 1 && column > 0 && minefield[row+1][column-1] == 1) {surrounding++}
   if (row > 0 && column > 0 && minefield[row-1][column-1] == 1) {surrounding++}
   return surrounding;
+}
+
+const checkFlag = idToCheck => {
+  const flagged =  document.getElementById(idToCheck).classList.contains('flagged');
+  if (flagged) {minesFlagged--}
+  else {minesFlagged++}
+  return flagged;
 }
 
 // controller
@@ -246,6 +251,19 @@ const onReveal = event => {
 
 }
 
+const onFlag = event => {
+  const tileToFlag = event.target;
+  const tileId = tileToFlag.id;
+  const idCoords = tileId.split(/_/);
+
+  if (checkFlag(tileId)) {
+    removeFlag(tileId);
+  }
+  else {
+    displayFlag(tileId);
+  }
+}
+
 // view
 const addElement = (elements, destination) => {
   elements.forEach(element => {
@@ -280,6 +298,23 @@ const displayClear = (row, column) => {
   const toClear = document.getElementById(row + '_' + column);
   toClear.classList.remove('unrevealed');
   toClear.classList.add('revealed-clear');
+}
+
+const displayFlag = idToFlag => {
+  const toFlag = document.getElementById(idToFlag);
+  toFlag.classList.add('flagged');
+
+  const flagImage = document.createElement('img');
+  flagImage.className = 'm-button-icon';
+  flagImage.src = 'icons/flag.PNG';
+
+  toFlag.append(flagImage);
+}
+
+const removeFlag = flagToRemove => {
+  const toUnFLag = document.getElementById(flagToRemove);
+  toUnFLag.classList.remove('flagged');
+  toUnFLag.innerHTML = '';
 }
 
 const loadSettingsPage = () => { // settings page
@@ -358,6 +393,7 @@ const loadGrid = (rows, columns) => {
   const display = document.getElementById('game-display');
   display.innerHTML = ''
   display.style.gridTemplateColumns = repeatString('1fr ', columns);
+  display.addEventListener("contextmenu", e => {e.preventDefault()});
 
   let gridButton;
   for (let i = 0; i < rows; i++) {
@@ -366,6 +402,7 @@ const loadGrid = (rows, columns) => {
       gridButton.id = i + '_' + j;
       gridButton.className = 'minesweeper-button unrevealed';
       gridButton.onclick = onReveal;
+      gridButton.oncontextmenu = onFlag;
       display.append(gridButton);
     }
   }
@@ -374,10 +411,12 @@ const loadGrid = (rows, columns) => {
 
 const gameLost = () => {
   // lost game menu
+  console.log('lost');
 }
 
 const gameWon = () => {
   // won game menu
+  console.log('won');
 }
 
 initialize();
