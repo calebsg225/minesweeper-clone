@@ -111,10 +111,11 @@
   border-radius: inherit;
   cursor: pointer;
   transition: opacity .2s;
+  opacity: 0.9;
 }
 
 .settings-button:hover {
-  opacity: .9;
+  opacity: .7;
 }
 
 .settings-active-button {

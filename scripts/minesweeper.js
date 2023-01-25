@@ -30,7 +30,7 @@ const baseModes = [
     isActive: false
   }
 ]
-const defaultMode = 2;
+const defaultMode = 1;
 baseModes[defaultMode].isActive = true
 let currentMode = defaultMode;
 let previousMode = defaultMode;
@@ -65,6 +65,7 @@ const createNew = () => {
 }
 
 const createMineField = () => {
+  spacesRevealed = 0;
   const mode = baseModes[currentMode];
   return(Array.from(Array(mode.rows), () => new Array(mode.columns).fill(0)));
 }
@@ -198,11 +199,14 @@ const getSurrounding = (row, column) => {
   return surrounding;
 }
 
-const checkFlag = idToCheck => {
-  const flagged =  document.getElementById(idToCheck).classList.contains('flagged');
+const toggleFlag = flagged => {
   if (flagged) {minesFlagged--}
   else {minesFlagged++}
   return flagged;
+}
+
+const checkFlag = idToCheck => {
+  return document.getElementById(idToCheck).classList.contains('flagged');
 }
 
 // controller
@@ -233,6 +237,11 @@ const onReveal = event => {
   const tileId = tileToReveal.id;
   const idCoords = tileId.split(/_/);
 
+  if (checkFlag(tileId)) {
+    toggleFlag(checkFlag(tileId));
+    removeFlag(tileId);
+  }
+
   if (firstTile) {replaceMines(+idCoords[0], +idCoords[1])}
 
   if (revealedMine(tileId)) {
@@ -251,10 +260,15 @@ const onReveal = event => {
 
 }
 
+const revealSurrounding = tileId => {
+  console.log('both');
+}
+
 const onFlag = event => {
   const tileToFlag = event.target;
   const tileId = tileToFlag.id;
-  const idCoords = tileId.split(/_/);
+
+  toggleFlag(checkFlag(tileId));
 
   if (checkFlag(tileId)) {
     removeFlag(tileId);
@@ -286,6 +300,20 @@ const displayNumber = (row, column, mineCount) => {
   const toDisplayNumber = document.getElementById(row + '_' + column);
   toDisplayNumber.classList.remove('unrevealed');
   toDisplayNumber.classList.add('revealed-clear');
+
+  let left = false;
+  let right = false;
+  toDisplayNumber.addEventListener('mouseup', e => {
+    if (e.button === 0) {left = true}
+    if (e.button === 2) {right = true}
+    if (left && right) {revealSurrounding(row + '_' + column)}
+  });
+  toDisplayNumber.addEventListener('mouseup', e => {
+    setTimeout(() => {
+      if (e.button === 0) {left = false}
+      if (e.button === 2) {right = false}
+    }, 100);
+  })
 
   const numberImage = document.createElement('img');
   numberImage.className = 'm-button-icon';
@@ -403,6 +431,7 @@ const loadGrid = (rows, columns) => {
       gridButton.className = 'minesweeper-button unrevealed';
       gridButton.onclick = onReveal;
       gridButton.oncontextmenu = onFlag;
+      
       display.append(gridButton);
     }
   }
