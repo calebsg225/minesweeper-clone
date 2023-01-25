@@ -27,10 +27,11 @@ const baseModes = [
     rows: 16,
     columns: 30,
     mines: 99,
-    isActive: true
+    isActive: false
   }
 ]
 const defaultMode = 2;
+baseModes[defaultMode].isActive = true
 let currentMode = defaultMode;
 let previousMode = defaultMode;
 
@@ -58,6 +59,7 @@ const createNew = () => {
   previousMode = currentMode;
   const rows = baseModes[currentMode].rows;
   const columns = baseModes[currentMode].columns;
+  firstTile = true;
 
   loadGrid(rows, columns);
 }
