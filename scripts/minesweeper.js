@@ -30,7 +30,7 @@ const baseModes = [
     isActive: false
   }
 ]
-const defaultMode = 1;
+const defaultMode = 2;
 baseModes[defaultMode].isActive = true
 let currentMode = defaultMode;
 let previousMode = defaultMode;
