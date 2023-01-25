@@ -269,7 +269,7 @@ const displayNumber = (row, column, mineCount) => {
 
   const numberImage = document.createElement('img');
   numberImage.className = 'm-button-icon';
-  numberImage.src = `icons/${mineCount}.png`;
+  numberImage.src = `icons/${mineCount}.PNG`;
 
   toDisplayNumber.append(numberImage);
 }
