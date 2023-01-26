@@ -18,6 +18,35 @@
 #header-title {
   font-size: inherit;
   font-weight: 500;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#right-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: inherit;
+  width: 5rem;
+}
+
+#score-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 3rem;
+  height: inherit;
+}
+
+#score {
+  margin: 0;
+  height: 125%;
+  font-weight: 400;
+  font-family: Teko, roboto;
+  color: rgb(255, 0, 0);
+  font-size: 2.5rem;
 }
 
 #settings-icon {

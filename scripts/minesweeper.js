@@ -63,6 +63,7 @@ const createNew = () => {
   const rows = baseModes[currentMode].rows;
   const columns = baseModes[currentMode].columns;
   firstTile = true;
+  minesFlagged = 0;
 
   loadGrid(rows, columns);
 }
@@ -341,12 +342,16 @@ const displayFlag = idToFlag => {
   flagImage.src = 'icons/flag.PNG';
 
   toFlag.append(flagImage);
+
+  document.getElementById('score').innerText = baseModes[currentMode].mines - minesFlagged;
 }
 
 const removeFlag = flagToRemove => {
   const toUnFLag = document.getElementById(flagToRemove);
   toUnFLag.classList.remove('flagged');
   toUnFLag.innerHTML = '';
+  
+  document.getElementById('score').innerText = baseModes[currentMode].mines - minesFlagged;
 }
 
 const loadSettingsPage = () => { // settings page
@@ -403,12 +408,26 @@ const initialize = () => { // load page
   headerTitle.id = 'header-title';
   headerTitle.innerText = 'Minesweeper - ' + baseModes[currentMode].gamemode;
   
+  const rightHeader = document.createElement('div');
+  rightHeader.id = 'right-header';
+
+  const scoreContainer = document.createElement('div');
+  scoreContainer.id = 'score-container';
+
+  const score = document.createElement('h2');
+  score.id = 'score';
+  score.innerText = baseModes[currentMode].mines - minesFlagged;
+
+  addElement([score], scoreContainer);
+
   const settingsIcon = document.createElement('img');
   settingsIcon.src = 'icons/settings.png';
   settingsIcon.id = 'settings-icon';
   settingsIcon.onclick = onSettings;
 
-  addElement([headerTitle, settingsIcon], header);
+  addElement([scoreContainer, settingsIcon], rightHeader);
+
+  addElement([headerTitle, rightHeader], header);
 
 
   // game display
@@ -428,6 +447,8 @@ const loadGrid = (rows, columns) => {
   display.addEventListener("contextmenu", e => {e.preventDefault()});
 
   document.getElementById('main-container').style.width = baseModes[currentMode].width + 'rem';
+  document.getElementById('score').innerText = baseModes[currentMode].mines - minesFlagged;
+
 
   let gridButton;
   for (let i = 0; i < rows; i++) {
