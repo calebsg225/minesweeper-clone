@@ -6,7 +6,6 @@
 
 #main-container {
   overflow: auto;
-  width: 65rem;
 }
 
 #header {
@@ -39,8 +38,10 @@
 }
 
 .minesweeper-button {
+  position: relative;
   aspect-ratio: 1/1;
   border-radius: 0;
+  padding: 0;
 }
 
 .unrevealed {
@@ -59,8 +60,11 @@
 }
 
 .m-button-icon {
+  position: absolute;
+  top: 5%;
+  bottom: 5%;
   width: 100%;
-  height: 80%;
+  height: 90%;
   object-fit: contain;
   pointer-events: none;
 }

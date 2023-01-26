@@ -13,21 +13,24 @@ const baseModes = [
     rows: 9,
     columns: 9,
     mines: 10,
-    isActive: false
+    isActive: false,
+    width: 65
   },
   {
     gamemode: 'Intermediate',
     rows: 16,
     columns: 16,
     mines: 40,
-    isActive: false
+    isActive: false,
+    width: 65
   },
   {
     gamemode: 'Expert',
     rows: 16,
     columns: 30,
     mines: 99,
-    isActive: false
+    isActive: false,
+    width: 120
   }
 ]
 const defaultMode = 2;
@@ -261,6 +264,7 @@ const onReveal = event => {
 }
 
 const revealSurrounding = tileId => {
+  // reveal all surrounding tiles if flags == mines in uncleared
   console.log('both');
 }
 
@@ -423,10 +427,12 @@ const loadGrid = (rows, columns) => {
   display.style.gridTemplateColumns = repeatString('1fr ', columns);
   display.addEventListener("contextmenu", e => {e.preventDefault()});
 
+  document.getElementById('main-container').style.width = baseModes[currentMode].width + 'rem';
+
   let gridButton;
   for (let i = 0; i < rows; i++) {
     for (let j = 0; j < columns; j++) {
-      gridButton = document.createElement('button');
+      gridButton = document.createElement('div');
       gridButton.id = i + '_' + j;
       gridButton.className = 'minesweeper-button unrevealed';
       gridButton.onclick = onReveal;
