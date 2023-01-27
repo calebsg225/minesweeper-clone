@@ -152,6 +152,10 @@ const revealMines = () => {
 }
 
 const recursiveClear = (row, column) => {
+  if (checkFlag(row + '_' + column)) {
+    return;
+  }
+
   document.getElementById(row + '_' + column).onclick = '';
   document.getElementById(row + '_' + column).oncontextmenu = '';
   if (document.getElementById(row + '_' + column).classList.contains('revealed-clear')) {return};
@@ -336,6 +340,7 @@ const displayClear = (row, column) => {
 const displayFlag = idToFlag => {
   const toFlag = document.getElementById(idToFlag);
   toFlag.classList.add('flagged');
+  toFlag.onclick = '';
 
   const flagImage = document.createElement('img');
   flagImage.className = 'm-button-icon';
@@ -350,6 +355,7 @@ const removeFlag = flagToRemove => {
   const toUnFLag = document.getElementById(flagToRemove);
   toUnFLag.classList.remove('flagged');
   toUnFLag.innerHTML = '';
+  toUnFLag.onclick = onReveal;
   
   document.getElementById('score').innerText = baseModes[currentMode].mines - minesFlagged;
 }

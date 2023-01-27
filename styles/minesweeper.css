@@ -1,6 +1,7 @@
 :root {
   --unrevealed-bg-color: rgb(130, 133, 165);
   --revealed-bg-color: rgb(148, 148, 160);
+  --revealed-border-color: rgb(127, 127, 133);
   --body-bg-color: rgb(95, 107, 129);
 }
 
@@ -84,7 +85,7 @@
 }
 
 .revealed-clear {
-  border: .5px solid var(--revealed-bg-color);
+  border: .5px solid var(--revealed-border-color);
   background-color: var(--revealed-bg-color);
 }
 
