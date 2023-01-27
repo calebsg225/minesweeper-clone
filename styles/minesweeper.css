@@ -100,7 +100,7 @@
 }
 
 /* settings page */
-#settings-greyout {
+#greyout {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -110,7 +110,7 @@
   bottom: 0;
   top: 0;
   z-index: 100;
-  background-color: rgba(0, 0, 0, .5);
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 #settings-menu-container {
@@ -154,4 +154,52 @@
 
 .settings-active-button {
   background-color: rgb(86, 97, 134);
+}
+
+/* lose menu */
+@keyframes fadeGreyout {
+  from {background-color: rgba(0, 0, 0, 0);}
+  to {background-color: rgba(0, 0, 0, 0.5);}
+}
+
+@keyframes fadeMenu {
+  from {opacity: 0;}
+  to {opacity: .9;}
+}
+
+.greyout-clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  z-index: 100;
+  animation: fadeGreyout 2s ease-in .5s both;
+}
+
+.menu-container {
+  display: grid;
+  grid-template-columns: 100%;
+  justify-content: center;
+  width: 40vw;
+  min-width: 20rem;
+  max-width: 40rem;
+  height: 50vh;
+  min-height: 15rem;
+  max-height: 30rem;
+  border-radius: 1rem;
+}
+
+.msg-display {
+  text-align: center;
+  font-size: 7.5rem;
+  white-space: nowrap;
+  animation: fadeMenu 2s ease-in .5s both;
+}
+
+.new-game-button {
+  animation: fadeMenu 2s ease-in .5s backwards;
 }

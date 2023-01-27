@@ -231,8 +231,13 @@ const onExit = () => {
 }
 
 const onCreate = () => {
-    createNew();
-    unloadSettingsPage();
+  createNew();
+  unloadSettingsPage();
+}
+
+const onNewGame = () => {
+  createNew();
+  unloadEndScreen();
 }
 
 const onActive = (modeToActivate) => {
@@ -256,7 +261,7 @@ const onReveal = event => {
 
   if (revealedMine(tileId)) {
     revealMines(tileId);
-    gameLost();
+    endScreen('lost', 'Game Over', 'red');
     return;
   }
   else {
@@ -265,7 +270,7 @@ const onReveal = event => {
   
   if (checkWin()) {
     showFlags();
-    gameWon();
+    endScreen('won', 'You Won!', 'green');
   }
 
 }
@@ -303,7 +308,7 @@ const displayActive = (activeMode) => {
 }
 
 const unloadSettingsPage = () => {
-  document.getElementById('settings-greyout').remove();
+  document.getElementById('greyout').remove();
   document.getElementById('header-title').innerText = 'Minesweeper - ' + baseModes[currentMode].gamemode;
 }
 
@@ -378,7 +383,7 @@ const displayMine = (mineToDisplay, type) => {
 
 const loadSettingsPage = () => { // settings page
   const greyout = document.createElement('div');
-  greyout.id = 'settings-greyout';
+  greyout.id = 'greyout';
   addElement([greyout], document.body);
 
   const menu = document.createElement('div');
@@ -487,14 +492,34 @@ const loadGrid = (rows, columns) => {
   minefield = placeMines(createMineField());
 }
 
-const gameLost = () => {
+const endScreen = (result, display, color) => {
   // lost game menu
-  console.log('lost');
+  console.log(result);
+
+  const greyout = document.createElement('div');
+  greyout.className = 'greyout-clear';
+  document.body.append(greyout);
+
+  const menu = document.createElement('div');
+  menu.className = 'menu-container';
+
+  const heading = document.createElement('h1');
+  heading.className = 'msg-display';
+  heading.innerText = display;
+  heading.style.color = color;
+
+  const newGame = document.createElement('button');
+  newGame.className = 'new-game-button settings-button';
+  newGame.innerText = 'New Game';
+  newGame.onclick = onNewGame;
+
+  addElement([heading, newGame], menu);
+  greyout.append(menu);
+
 }
 
-const gameWon = () => {
-  // won game menu
-  console.log('won');
+const unloadEndScreen = () => {
+  document.getElementsByClassName('greyout-clear')[0].remove();
 }
 
 initialize();
