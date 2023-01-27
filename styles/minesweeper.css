@@ -175,7 +175,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  top: 0;
+  top: -40vh;
   z-index: 100;
   animation: fadeGreyout 2s ease-in .5s both;
 }
@@ -184,11 +184,11 @@
   display: grid;
   grid-template-columns: 100%;
   justify-content: center;
-  width: 40vw;
+  width: 80vw;
   min-width: 20rem;
   max-width: 40rem;
   height: 50vh;
-  min-height: 15rem;
+  min-height: 10rem;
   max-height: 30rem;
   border-radius: 1rem;
 }
@@ -196,10 +196,14 @@
 .msg-display {
   text-align: center;
   font-size: 7.5rem;
-  white-space: nowrap;
-  animation: fadeMenu 2s ease-in .5s both;
+  animation: fadeMenu 2s ease-in .5s backwards;
+  margin-bottom: 1rem;
 }
 
 .new-game-button {
   animation: fadeMenu 2s ease-in .5s backwards;
+  height: 6rem;
+  max-width: 30rem;
+  margin-left: 15%;
+  margin-right: 15%;
 }
