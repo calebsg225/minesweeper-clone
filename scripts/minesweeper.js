@@ -147,19 +147,36 @@ const revealedMine = idIsMine => {
   return minefield[+idCoords[0]][+idCoords[1]] == 1;
 }
 
-const revealMines = () => {
+const revealMines = (idRevealed) => {
   // display location of all mines and misplaced flags
+  const mode = baseModes[currentMode];
+  for (let j = 0; j < mode.columns; j++) {
+    for (let i = 0; i < mode.rows; i++) {
+      const currentTile = document.getElementById(i + '_' + j);
+      currentTile.onclick = '';
+      currentTile.oncontextmenu = '';
+      if (minefield[i][j] === 1) {
+        if (i + '_' + j == idRevealed) {displayMine(idRevealed, 'red-mine')}
+        else if (!currentTile.classList.contains('flagged')) {displayMine(i + '_' + j, 'mine')}
+      }
+      else if (currentTile.classList.contains('flagged')) {
+        removeFlag(i + '_' + j);
+        displayMine(i + '_' + j, 'flag-mine')
+      }
+    }
+  }
 }
 
 const recursiveClear = (row, column) => {
-  if (checkFlag(row + '_' + column)) {
-    return;
-  }
+  // recursively clears surrounding squares
+  if (checkFlag(row + '_' + column)) {return}
+  if (document.getElementById(row + '_' + column).classList.contains('revealed-clear')) {return};
 
   document.getElementById(row + '_' + column).onclick = '';
   document.getElementById(row + '_' + column).oncontextmenu = '';
-  if (document.getElementById(row + '_' + column).classList.contains('revealed-clear')) {return};
+
   spacesRevealed ++;
+
   const mode = baseModes[currentMode];
   const surroundingMines = getSurrounding(row, column);
   if (surroundingMines > 0) {
@@ -167,33 +184,18 @@ const recursiveClear = (row, column) => {
     return;
   }
   displayClear(row, column);
-  if (row < mode.rows - 1 && minefield[row+1][column] == 0) {
-    recursiveClear(row+1, column);
-  }
-  if (row > 0 && minefield[row-1][column] == 0) {
-    recursiveClear(row-1, column);
-  }
-  if (column < mode.columns - 1 && minefield[row][column+1] == 0) {
-    recursiveClear(row, column+1);
-  }
-  if (column > 0 && minefield[row][column-1] == 0) {
-    recursiveClear(row, column-1);
-  }
-  if (row < mode.rows - 1 && column < mode.columns - 1 && minefield[row+1][column+1] == 0) {
-    recursiveClear(row+1, column+1);
-  }
-  if (row > 0 && column < mode.columns - 1 && minefield[row-1][column+1] == 0) {
-    recursiveClear(row-1, column+1);
-  }
-  if (row < mode.rows - 1 && column > 0 && minefield[row+1][column-1] == 0) {
-    recursiveClear(row+1, column-1);
-  }
-  if (row > 0 && column > 0 && minefield[row-1][column-1] == 0) {
-    recursiveClear(row-1, column-1);
-  }
+  if (row < mode.rows - 1 && minefield[row+1][column] == 0) {recursiveClear(row+1, column);}
+  if (row > 0 && minefield[row-1][column] == 0) {recursiveClear(row-1, column);}
+  if (column < mode.columns - 1 && minefield[row][column+1] == 0) {recursiveClear(row, column+1);}
+  if (column > 0 && minefield[row][column-1] == 0) {recursiveClear(row, column-1);}
+  if (row < mode.rows - 1 && column < mode.columns - 1 && minefield[row+1][column+1] == 0) {recursiveClear(row+1, column+1);}
+  if (row > 0 && column < mode.columns - 1 && minefield[row-1][column+1] == 0) {recursiveClear(row-1, column+1);}
+  if (row < mode.rows - 1 && column > 0 && minefield[row+1][column-1] == 0) {recursiveClear(row+1, column-1);}
+  if (row > 0 && column > 0 && minefield[row-1][column-1] == 0) {recursiveClear(row-1, column-1);}
 }
 
 const getSurrounding = (row, column) => {
+  // tallies number of surrounding mines for current square
   const mode = baseModes[currentMode];
   let surrounding = 0;
   if (row < mode.rows - 1 && minefield[row+1][column] == 1) {surrounding++}
@@ -253,7 +255,7 @@ const onReveal = event => {
   if (firstTile) {replaceMines(+idCoords[0], +idCoords[1])}
 
   if (revealedMine(tileId)) {
-    revealMines();
+    revealMines(tileId);
     gameLost();
     return;
   }
@@ -306,23 +308,27 @@ const unloadSettingsPage = () => {
 }
 
 const displayNumber = (row, column, mineCount) => {
+  const bothButtonsPressed = e => {
+    if (e.button === 0) {left = true}
+    if (e.button === 2) {right = true}
+    if (left && right) {revealSurrounding(row + '_' + column)}
+  }
+  
+  const bothButtonsPressedOff = e => {
+    setTimeout(() => {
+      if (e.button === 0) {left = false}
+      if (e.button === 2) {right = false}
+    }, 100);
+  }
+  
   const toDisplayNumber = document.getElementById(row + '_' + column);
   toDisplayNumber.classList.remove('unrevealed');
   toDisplayNumber.classList.add('revealed-clear');
 
   let left = false;
   let right = false;
-  toDisplayNumber.addEventListener('mouseup', e => {
-    if (e.button === 0) {left = true}
-    if (e.button === 2) {right = true}
-    if (left && right) {revealSurrounding(row + '_' + column)}
-  });
-  toDisplayNumber.addEventListener('mouseup', e => {
-    setTimeout(() => {
-      if (e.button === 0) {left = false}
-      if (e.button === 2) {right = false}
-    }, 100);
-  })
+  toDisplayNumber.addEventListener('mouseup', bothButtonsPressed);
+  toDisplayNumber.addEventListener('mouseup', bothButtonsPressedOff);
 
   const numberImage = document.createElement('img');
   numberImage.className = 'm-button-icon';
@@ -358,6 +364,16 @@ const removeFlag = flagToRemove => {
   toUnFLag.onclick = onReveal;
   
   document.getElementById('score').innerText = baseModes[currentMode].mines - minesFlagged;
+}
+
+const displayMine = (mineToDisplay, type) => {
+  const toShowMine = document.getElementById(mineToDisplay);
+  
+  const mineImage = document.createElement('img');
+  mineImage.className = 'm-button-icon';
+  mineImage.src =`icons/${type}.PNG`;
+
+  toShowMine.append(mineImage);
 }
 
 const loadSettingsPage = () => { // settings page

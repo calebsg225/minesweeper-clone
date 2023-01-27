@@ -30,7 +30,7 @@
   align-items: center;
   justify-content: space-between;
   height: inherit;
-  width: 5rem;
+  width: 6rem;
 }
 
 #score-container {
@@ -43,11 +43,11 @@
 
 #score {
   margin: 0;
-  height: 125%;
+  height: 145%;
   font-weight: 400;
   font-family: Teko, roboto;
-  color: rgb(255, 0, 0);
-  font-size: 2.5rem;
+  color: rgb(233, 85, 85);
+  font-size: 2.8rem;
 }
 
 #settings-icon {
