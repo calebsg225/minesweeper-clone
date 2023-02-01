@@ -83,6 +83,10 @@
   opacity: .5;
 }
 
+.unrevealed-double-click {
+  opacity: .5;
+}
+
 .revealed-clear {
   border: .5px solid var(--revealed-border-color);
   background-color: var(--revealed-bg-color);

@@ -3,6 +3,7 @@ let minefield = [];
 let spacesRevealed = 0;
 let minesFlagged = 0;
 let firstTile = true;
+let doubleClick = [];
 
 const baseModes = [
   {
@@ -221,7 +222,6 @@ const revealSurrounding = (row, column) => {
   let unrevealed = [];
   let flagged = [];
   let surrounding = 0;
-  let minesToClear = [];
   if (row < mode.rows - 1) {
     if (minefield[row+1][column] == 1) { surrounding++ }
     if (checkUnrevealed((row+1) + '_' + column)) { unrevealed.push([row+1, column]) }
@@ -262,7 +262,11 @@ const revealSurrounding = (row, column) => {
     if (checkUnrevealed((row-1) + '_' + (column-1))) { unrevealed.push([row-1, column-1]) }
     if (checkFlag((row-1) + '_' + (column-1))) { flagged.push([row-1, column-1]); unrevealed.pop() }
   }
-  
+  doubleClick = [unrevealed, flagged, surrounding];
+}
+
+const revealSurroundingDisplay = ([unrevealed, flagged, surrounding]) => {
+  let minesToClear = [];
   if (flagged.length != surrounding) {return}
   for (const tile of unrevealed) {
     if (!revealedMine(tile[0] + '_' + tile[1])) {
@@ -334,7 +338,10 @@ const onRevealSurrounding = tileId => {
   // reveal all surrounding tiles if flags == mines in uncleared
   const [ row, column ] = tileId.split('_');
   revealSurrounding(+row, +column);
+}
 
+const onRevealSurroundingDisplay = () => {
+  revealSurroundingDisplay(doubleClick);
 }
 
 const onFlag = event => {
@@ -358,6 +365,20 @@ const addElement = (elements, destination) => {
   });
 }
 
+const doubleHoverOn = (tilesToHover) => {
+  for (const tile of tilesToHover) {
+    const [row, column] = tile;
+    document.getElementById(row + '_' + column).classList.add('unrevealed-double-click');
+  }
+}
+
+const doubleHoverOff = (tilesToUnHover) => {
+  for (const tile of tilesToUnHover) {
+    const [row, column] = tile;
+    document.getElementById(row + '_' + column).classList.remove('unrevealed-double-click');
+  }
+}
+
 const displayActive = (activeMode) => {
   document.getElementsByClassName('settings-active-button')[0].classList.remove('settings-active-button');
   const activeButton = document.getElementById('settings-mode-' + baseModes[currentMode].gamemode);
@@ -370,16 +391,28 @@ const unloadSettingsPage = () => {
 }
 
 const displayNumber = (row, column, mineCount) => {
+  const bothButtonsPressedPrep = e => {
+    if (e.button === 0) {left = true}
+    if (e.button === 2) {right = true}
+    if (left && right) {
+      onRevealSurrounding(row + '_' + column);
+      doubleHoverOn(doubleClick[0])
+    }
+  }
+
   const bothButtonsPressed = e => {
     if (e.button === 0) {left = true}
     if (e.button === 2) {right = true}
-    if (left && right) {onRevealSurrounding(row + '_' + column)}
+    if (left && right) {
+      onRevealSurroundingDisplay(doubleClick.concat(doubleClick[1]));
+    }
   }
   
   const bothButtonsPressedOff = e => {
     setTimeout(() => {
       if (e.button === 0) {left = false}
       if (e.button === 2) {right = false}
+      doubleHoverOff(doubleClick[0].concat(doubleClick[1]))
     }, 100);
   }
   
@@ -389,6 +422,7 @@ const displayNumber = (row, column, mineCount) => {
 
   let left = false;
   let right = false;
+  toDisplayNumber.addEventListener('mousedown', bothButtonsPressedPrep)
   toDisplayNumber.addEventListener('mouseup', bothButtonsPressed);
   toDisplayNumber.addEventListener('mouseup', bothButtonsPressedOff);
 
