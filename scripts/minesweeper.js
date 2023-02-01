@@ -14,7 +14,7 @@ const baseModes = [
     columns: 9,
     mines: 10,
     isActive: false,
-    width: 65
+    width: 60
   },
   {
     gamemode: 'Intermediate',
@@ -22,7 +22,7 @@ const baseModes = [
     columns: 16,
     mines: 40,
     isActive: false,
-    width: 65
+    width: 60
   },
   {
     gamemode: 'Expert',

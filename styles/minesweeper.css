@@ -64,7 +64,6 @@
 /* game display window */
 #game-display {
   display: grid;
-
 }
 
 .minesweeper-button {
@@ -156,7 +155,7 @@
   background-color: rgb(86, 97, 134);
 }
 
-/* lose menu */
+/* win/lose menu */
 @keyframes fadeGreyout {
   from {background-color: rgba(0, 0, 0, 0);}
   to {background-color: rgba(0, 0, 0, 0.5);}
