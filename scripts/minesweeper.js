@@ -405,6 +405,7 @@ const displayNumber = (row, column, mineCount) => {
     if (e.button === 2) {right = true}
     if (left && right) {
       onRevealSurroundingDisplay(doubleClick.concat(doubleClick[1]));
+      doubleHoverOff(doubleClick[0].concat(doubleClick[1]))
     }
   }
   
@@ -412,7 +413,6 @@ const displayNumber = (row, column, mineCount) => {
     setTimeout(() => {
       if (e.button === 0) {left = false}
       if (e.button === 2) {right = false}
-      doubleHoverOff(doubleClick[0].concat(doubleClick[1]))
     }, 100);
   }
   
