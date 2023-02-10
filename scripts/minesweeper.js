@@ -73,7 +73,6 @@ const createMineField = () => {
 }
 
 const placeMines = field => {
-
   let row;
   let column;
   for (let i = 0; i < mode.mines; i++) {
@@ -88,40 +87,16 @@ const placeMines = field => {
 const replaceMines = (row, column) => {
   // load mines not near first click
   minefield = createMineField();
-  let coords = [[row, column]];
-  minefield[row][column] = 2;
-  if (row < mode.rows - 1) {
-    minefield[row+1][column] = 2;
-    coords.push([row+1, column]);
+  let coords = [];
+  for (let i = -1; i < 2; i++) {
+    for (let j = -1; j < 2; j++) {
+      try {
+        minefield[row + i][column + j] = 2;
+        coords.push([row + i, column + j]);
+      } catch {}
+    }
   }
-  if (row > 0) {
-    minefield[row-1][column] = 2;
-    coords.push([row-1, column]);
-  }
-  if (column < mode.columns - 1) {
-    minefield[row][column+1] = 2;
-    coords.push([row, column+1]);
-  }
-  if (column > 0) {
-    minefield[row][column-1] = 2;
-    coords.push([row, column-1]);
-  }
-  if (row < mode.rows - 1 && column < mode.columns - 1) {
-    minefield[row+1][column+1] = 2;
-    coords.push([row+1, column+1]);
-  }
-  if (row > 0 && column < mode.columns - 1) {
-    minefield[row-1][column+1] = 2;
-    coords.push([row-1, column+1]);
-  }
-  if (row < mode.rows - 1 && column > 0) {
-    minefield[row+1][column-1] = 2;
-    coords.push([row+1, column-1]);
-  }
-  if (row > 0 && column > 0) {
-    minefield[row-1][column-1] = 2;
-    coords.push([row-1, column-1]);
-  }
+
   minefield = placeMines(minefield);
   coords.forEach(coord => {
     minefield[coord[0]][coord[1]] = 0;
@@ -180,28 +155,31 @@ const recursiveClear = (row, column) => {
     return;
   }
   displayClear(row, column);
-  if (row < mode.rows - 1 && minefield[row+1][column] == 0) {recursiveClear(row+1, column);}
-  if (row > 0 && minefield[row-1][column] == 0) {recursiveClear(row-1, column);}
-  if (column < mode.columns - 1 && minefield[row][column+1] == 0) {recursiveClear(row, column+1);}
-  if (column > 0 && minefield[row][column-1] == 0) {recursiveClear(row, column-1);}
-  if (row < mode.rows - 1 && column < mode.columns - 1 && minefield[row+1][column+1] == 0) {recursiveClear(row+1, column+1);}
-  if (row > 0 && column < mode.columns - 1 && minefield[row-1][column+1] == 0) {recursiveClear(row-1, column+1);}
-  if (row < mode.rows - 1 && column > 0 && minefield[row+1][column-1] == 0) {recursiveClear(row+1, column-1);}
-  if (row > 0 && column > 0 && minefield[row-1][column-1] == 0) {recursiveClear(row-1, column-1);}
+  for(let i = -1; i < 2; i++) {
+    for (let j = -1; j < 2; j++) {
+      try {
+        if (minefield[row + i][column + j] == 0) {
+          recursiveClear(row + i, column + j);
+        }
+      } catch {}
+    }
+  }
 }
 
 const getSurrounding = (row, column) => {
-  // tallies number of surrounding mines for current square
-  let surrounding = 0;
-  if (row < mode.rows - 1 && minefield[row+1][column] == 1) {surrounding++}
-  if (row > 0 && minefield[row-1][column] == 1) {surrounding++}
-  if (column < mode.columns - 1 && minefield[row][column+1] == 1) {surrounding++}
-  if (column > 0 && minefield[row][column-1] == 1) {surrounding++}
-  if (row < mode.rows - 1 && column < mode.columns - 1 && minefield[row+1][column+1] == 1) {surrounding++}
-  if (row > 0 && column < mode.columns - 1 && minefield[row-1][column+1] == 1) {surrounding++}
-  if (row < mode.rows - 1 && column > 0 && minefield[row+1][column-1] == 1) {surrounding++}
-  if (row > 0 && column > 0 && minefield[row-1][column-1] == 1) {surrounding++}
-  return surrounding;
+  return checkOuterHelper(row, column, 0, 1, (s) => s+1);
+}
+const checkOuterHelper = (row, column, initial, checkAgainst, doStatements) => {
+  for (let i = -1; i < 2; i++) {
+    for (let j = -1; j < 2; j ++) {
+      try {
+        if (minefield[row + i][column + j] == checkAgainst) {
+          initial = doStatements(initial);
+        }
+      } catch {}
+    }
+  }
+  return initial;
 }
 
 const toggleFlag = flagged => {
@@ -222,46 +200,18 @@ const revealSurrounding = (row, column) => {
   let unrevealed = [];
   let flagged = [];
   let surrounding = 0;
-  if (row < mode.rows - 1) {
-    if (minefield[row+1][column] == 1) { surrounding++ }
-    if (checkUnrevealed((row+1) + '_' + column)) { unrevealed.push([row+1, column]) }
-    if (checkFlag((row+1) + '_' + column)) { flagged.push([row+1, column]); unrevealed.pop() }
+
+  for (let i = -1; i < 2; i ++) {
+    for (let j = -1; j < 2; j++) {
+      if (i == 0 && j == 0) {continue}
+      try {
+        if (minefield[row + i][column + j] == 1) { surrounding++ }
+        if (checkUnrevealed((row + i) + '_' + (column + j))) { unrevealed.push([row + i, column + j]) }
+        if (checkFlag((row + i) + '_' + (column + j))) { flagged.push([row + i, column + j]); unrevealed.pop() }
+      } catch {}
+    }
   }
-  if (row > 0) {
-    if (minefield[row-1][column] == 1) { surrounding++ }
-    if (checkUnrevealed((row-1) + '_' + column)) { unrevealed.push([row-1, column]) }
-    if (checkFlag((row-1) + '_' + column)) { flagged.push([row-1, column]); unrevealed.pop() }
-  }
-  if (column < mode.columns - 1) {
-    if (minefield[row][column+1] == 1) { surrounding++ }
-    if (checkUnrevealed(row + '_' + (column+1))) { unrevealed.push([row, column+1]) }
-    if (checkFlag(row + '_' + (column+1))) { flagged.push([row, column+1]); unrevealed.pop() }
-  }
-  if (column > 0) {
-    if (minefield[row][column-1] == 1) { surrounding++ }
-    if (checkUnrevealed(row + '_' + (column-1))) { unrevealed.push([row, column-1]) }
-    if (checkFlag(row + '_' + (column-1))) { flagged.push([row, column-1]); unrevealed.pop() }
-  }
-  if (row < mode.rows - 1 && column < mode.columns - 1) {
-    if (minefield[row+1][column+1] == 1) { surrounding++ }
-    if (checkUnrevealed((row+1) + '_' + (column+1))) { unrevealed.push([row+1, column+1]) }
-    if (checkFlag((row+1) + '_' + (column+1))) { flagged.push([row+1, column+1]); unrevealed.pop() }
-  }
-  if (row > 0 && column < mode.columns - 1) {
-    if (minefield[row-1][column+1] == 1) { surrounding++ }
-    if (checkUnrevealed((row-1) + '_' + (column+1))) { unrevealed.push([row-1, column+1]) }
-    if (checkFlag((row-1) + '_' + (column+1))) { flagged.push([row-1, column+1]); unrevealed.pop() }
-  }
-  if (row < mode.rows - 1 && column > 0) {
-    if (minefield[row+1][column-1] == 1) { surrounding++ }
-    if (checkUnrevealed((row+1) + '_' + (column-1))) { unrevealed.push([row+1, column-1]) }
-    if (checkFlag((row+1) + '_' + (column-1))) { flagged.push([row+1, column-1]); unrevealed.pop() }
-  }
-  if (row > 0 && column > 0) {
-    if (minefield[row-1][column-1] == 1) { surrounding++ }
-    if (checkUnrevealed((row-1) + '_' + (column-1))) { unrevealed.push([row-1, column-1]) }
-    if (checkFlag((row-1) + '_' + (column-1))) { flagged.push([row-1, column-1]); unrevealed.pop() }
-  }
+
   doubleClick = [unrevealed, flagged, surrounding];
 }
 
